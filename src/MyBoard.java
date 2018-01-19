@@ -2,6 +2,7 @@
 public class MyBoard implements Board {
 	
 	private Coordinate[][] board;
+	private int moveNumber;
 	
 	/**
 	 * Constructor takes in an integer which is the desired
@@ -25,7 +26,7 @@ public class MyBoard implements Board {
 	@Override
 	public void placeStone(Stone s, Coordinate c) {
 		// TODO Auto-generated method stub
-
+		moveNumber++;
 	}
 
 	@Override
@@ -48,8 +49,7 @@ public class MyBoard implements Board {
 
 	@Override
 	public int getMoveNumber() {
-		// TODO Auto-generated method stub
-		return 0;
+		return moveNumber;
 	}
 
 	@Override

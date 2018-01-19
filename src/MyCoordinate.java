@@ -11,14 +11,12 @@ public class MyCoordinate implements Coordinate {
 
 	@Override
 	public int getRow() {
-		// TODO Auto-generated method stub
-		return 0;
+		return row;
 	}
 
 	@Override
 	public int getColumn() {
-		// TODO Auto-generated method stub
-		return 0;
+		return column;
 	}
 
 }

@@ -47,7 +47,7 @@ public interface Board {
 	public int getMoveNumber();
 	
 	/**
-	 * Get the number of times red has captures a pair of yellow pieces.
+	 * Get the number of times red has captured a pair of yellow pieces.
 	 * @return
 	 */
 	public int getRedCaptures();
