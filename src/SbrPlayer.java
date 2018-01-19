@@ -1,0 +1,20 @@
+
+public class SbrPlayer implements Player {
+	private Stone stone;
+	
+	public SbrPlayer(Stone stoneColor) {
+		this.stone = stoneColor;
+	}
+
+	@Override
+	public Coordinate getMove(Board b) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Stone getStone() {
+		return stone;
+	}
+
+}
