@@ -12,8 +12,8 @@ public class MyBoardTest {
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testBoardNotNull() {
+		assertNotNull("This board should have something in it", b);
 	}
 
 }

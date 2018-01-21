@@ -71,4 +71,12 @@ public interface Board {
 	 * @return
 	 */
 	public Stone getWinner();
+	
+	/**
+	 * Prints out the board, with RED pieces as "O"s and YELLOW pieces
+	 * as "X"s. EMPTY pieces are marked with an empty string, "".
+	 * @return the game board, with pieces
+	 */
+	public String toString();
+	
 }

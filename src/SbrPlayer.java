@@ -9,54 +9,18 @@ public class SbrPlayer implements Player {
 
 	@Override
 	public Coordinate getMove(Board b) {
-		final int totalNumOfCoords = 19 * 19;
+		final int numOfRows = 19;
+		final int numOfCols = 19;
 		Random rand = new Random();
 		MyCoordinate randCoord = null;
-		MyCoordinate move = null;
-		int moveNumber = b.getMoveNumber();
 		
-		//generate a random coordinate - but follow the rules of the game
-		
-		//IF AI IS RED
-		if (stone.compareTo(Stone.RED) == 0) {
-			if (moveNumber == 0) {
-				//first move is center
-				move = new MyCoordinate(9, 9);
-			} else if (moveNumber == 2) {
-				//second move is restricted
-				for (int i = 0; i < totalNumOfCoords; i++) {
+		//generate a random coordinate
 					
-					int moveRow = rand.nextInt(19);
-					int moveColumn = rand.nextInt(19);
-					randCoord = new MyCoordinate(moveRow, moveColumn);
-					
-					//first, check that its an empty coordinate
-					if (b.isEmpty(randCoord)) {
+		int moveRow = rand.nextInt(numOfRows);
+		int moveColumn = rand.nextInt(numOfCols);
+		randCoord = new MyCoordinate(moveRow, moveColumn);
 						
-						int randRow = randCoord.getRow();
-						int randCol = randCoord.getColumn();
-						
-						//then, check that its 3 or more intersections 
-						//away from center
-						if ((randRow < 7 || randRow > 11) &
-								(randCol < 7 || randCol > 11)) {
-							move = randCoord;
-							break;
-						}
-					}
-				}
-				//for all other moves after the first and second
-				//just pick a random non-empty coordinate
-			} else {
-				move = pickRandNonEmptyCoord(b);
-			}
-		//IF AI IS YELLOW - any non-empty coordinate for any move
-		} else if (stone.compareTo(Stone.YELLOW) == 0) {
-			move = pickRandNonEmptyCoord(b);
-		} else {
-			System.out.println("Player must be assigned to either RED or YELLOW");
-		}
-		return move;
+		return randCoord;
 	}
 	
 	private MyCoordinate pickRandNonEmptyCoord(Board b) {
