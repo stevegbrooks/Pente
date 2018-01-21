@@ -12,12 +12,16 @@ public class MyBoard implements Board {
 	
 		//creates a 19x19 board - fill with coordinates
 			//9,9 is center
+		
 		final int numOfRows = 19;
 		final int numOfColumns = 19;
 		
+		this.board = new Coordinate[numOfRows][numOfColumns];
+		
 		for (int i = 0; i < numOfRows; i++) {
 			for (int j = 0; j < numOfColumns; j++) {
-				board[i][j] = new MyCoordinate(i, j);
+				Coordinate coord = new MyCoordinate(i, j);
+				board[i][j] = coord;
 			}
 		}
 		
