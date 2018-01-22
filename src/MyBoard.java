@@ -5,6 +5,9 @@ public class MyBoard implements Board {
 	private Stone[][] board;
 	private final int numOfRows = 19;
 	private final int numOfColumns = 19;
+	private final int centerRow = 9;
+	private final int centerCol = 9;
+	
 	private int moveNumber;
 	private int redCaptures;
 	private int yellowCaptures;
@@ -54,9 +57,8 @@ public class MyBoard implements Board {
 		if (s.equals(Stone.RED)) {
 			//if its the first move of the game, then center is only legal move
 			if (moveNumber == 0) {
-				Coordinate center = new MyCoordinate(9,9);
 				//if move isn't center, then throw exception
-				if (!c.equals(center)) {
+				if (moveRow != centerRow && moveCol != centerCol) {
 					throw new IllegalArgumentException("Illegal Move "
 							+ "- first move must be center (9,9)");
 				} else {
@@ -152,10 +154,25 @@ public class MyBoard implements Board {
 	
 	@Override
 	public String toString() {
-		//construct a string to represent each row of the board
 		String row = new String();
+		//print column headers
+		for (int i = 0; i < numOfColumns; i++) {
+			if (i < 10) {
+				row += "   " + i;
+			} else {
+				row += "  " + i;
+			}
+		}
+		row += '\n';
 		
+		//print row contents
 		for (int i = 0; i < numOfRows; i++) {
+			//print row #s
+			if (i < 10) {
+				row += " " + i;
+			} else {
+				row += i;
+			}
 			for (int j = 0; j < numOfColumns; j++) {
 				//for each coordinate in each row
 				//check the stone color and add to the string

@@ -12,7 +12,7 @@ public class HumanPlayer implements Player {
 		Scanner in = new Scanner(System.in);
 		
 		System.out.print("Please enter a coordinate using the following"
-				+ "format (comma separated): row#, col# ");
+				+ " format (comma separated): row#, col# ");
 		
 		String line = in.nextLine();
 		String[] lineArr = line.split(",", 2);
@@ -20,9 +20,7 @@ public class HumanPlayer implements Player {
 		int row = Integer.parseInt(lineArr[0]);
 		int col = Integer.parseInt(lineArr[1]);
 		
-		Coordinate coords = new MyCoordinate(row, col);
-		in.close();
-		
+		Coordinate coords = new MyCoordinate(row, col);		
 		return coords;
 	}
 

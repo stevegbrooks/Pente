@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class MainTester {
 
@@ -6,8 +7,7 @@ public class MainTester {
 		HumanPlayer human = new HumanPlayer(Stone.YELLOW);
 		MyBoard b = new MyBoard();
 		
-		System.out.println(b);
-		
+		b.placeStone(sbr.getStone(), sbr.getMove(b));
 		
 
 	}
