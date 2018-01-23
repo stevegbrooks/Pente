@@ -158,7 +158,9 @@ public class MyBoard implements Board {
 	 */
 	@Override
 	public boolean gameOver() {
-		// TODO Auto-generated method stub
+		//check if 5 in a row
+		//then check if either redCaptures == 5 or yellowCaptures == 5
+		//if any of those are true, then return true
 		return false;
 	}
 
@@ -228,11 +230,11 @@ public class MyBoard implements Board {
 		int directionY = 0;
 
 		//iterate through all the intersections touching the current one
-		//TODO make sure it doesnt go out of bounds
+		//TODO make sure it doesn't go out of bounds
 		for (int i = 0; i < numOfRows; i++) {
 			for (int j = 0; j < numOfColumns; j++) {
-				//if the index is at a intersection thats touching the 
-				//coordinate in the argument of this method...
+				//if the index is an intersection that is touching the 
+				//getMove() coordinate...
 				if (Math.abs(i - moveRow) <= 1 && Math.abs(j - moveCol) <= 1) {
 					MyCoordinate adjacentCoord = new MyCoordinate(i, j);
 					//then check if that index has an enemy stone
