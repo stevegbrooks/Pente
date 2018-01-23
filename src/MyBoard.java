@@ -1,4 +1,3 @@
-import java.util.HashMap;
 
 public class MyBoard implements Board {
 	
@@ -41,6 +40,10 @@ public class MyBoard implements Board {
 	 * If it is an illegal move it throws an exception.
 	 * 
 	 * It then updates the moveNumber counter.
+	 * 
+	 * After a legal stone has been placed, it checks to see
+	 * if a capture has been made. If it has it updates
+	 * the capture counter for the appropriate stone color.
 	 */
 	@Override
 	public void placeStone(Stone s, Coordinate c) {
@@ -67,8 +70,8 @@ public class MyBoard implements Board {
 				//RED-players second move must be outside of 2 intersections of center
 			} else if (moveNumber == 2) {
 				//if the move is inside this restricted area, then throw exception
-				if (!((moveRow < 7 || moveCol > 11) &
-						(moveRow < 7 || moveCol > 11))) {
+				if (((moveRow >= 7 && moveCol >= 7) &&
+						(moveRow <= 11 && moveCol <= 11))) {
 					throw new IllegalArgumentException("Illegal Move "
 							+ "- must be more than two intersections away from center");
 				} else {
@@ -89,13 +92,20 @@ public class MyBoard implements Board {
 			}
 		}
 		
+		//increment moveNumber
 		moveNumber++;
+		//check for captures
+		checkCapture(s, c);
 	}
 
 	@Override
 	public Stone pieceAt(Coordinate c) {
-		// TODO Auto-generated method stub
-		return null;
+		int row = c.getRow();
+		int col = c.getColumn();
+		
+		Stone stone = board[row][col];
+		
+		return stone;
 	}
 
 	@Override
@@ -139,7 +149,13 @@ public class MyBoard implements Board {
 	public int getYellowCaptures() {
 		return yellowCaptures;
 	}
-
+	/**
+	 * This method will check if anyone has gotten
+	 * 5 in a row (horiz, diag, or vert).  It will also
+	 * query the # of captures to check if either equal 
+	 * 5 or more. If either of these things is true, then it 
+	 * returns true.
+	 */
 	@Override
 	public boolean gameOver() {
 		// TODO Auto-generated method stub
@@ -188,5 +204,62 @@ public class MyBoard implements Board {
 		}
 		return row;
 	}
+	
+	private void checkCapture(Stone currentStoneColor, Coordinate c) {
+		//check for captures - a capture can occur if a group of two
+		//stones of the enemy color is flanked on both sides. This can
+		//happen vertically, horizontally, or diagonally.
+		
+		//determine enemy stone color
+		Stone enemyColor = null;
+		if (currentStoneColor.equals(Stone.RED)) {
+			enemyColor = Stone.YELLOW;
+		} else if (currentStoneColor.equals(Stone.YELLOW)) {
+			enemyColor = Stone.RED;
+		}
+		
+		int moveRow = c.getRow();
+		int moveCol = c.getColumn();
+		
+		MyCoordinate enemyAdjacent = null;
+		MyCoordinate enemyAdjacent2 = null;
+		
+		int directionX = 0;
+		int directionY = 0;
+		
+		//iterate through all the intersections touching the current one
+		//TODO make sure it doesnt go out of bounds
+		for (int i = moveRow - 1; i < moveRow + 1; i++) {
+			for (int j = moveCol - 1; j < moveCol + 1; j++) {
 
+				MyCoordinate adjacentCoord = new MyCoordinate(i, j);
+				
+				if (pieceAt(adjacentCoord).equals(enemyColor)) {
+					enemyAdjacent = adjacentCoord;
+					//check direction that enemy is in
+					directionX = i - moveRow;
+					directionY = j - moveCol;
+					//check next one over
+					MyCoordinate adjacentCoord2 = new MyCoordinate(i + directionX, j + directionY);
+					if (pieceAt(adjacentCoord2).equals(enemyColor)) {
+						enemyAdjacent2 = adjacentCoord2;
+						//check that there's a friendly piece next one over
+						MyCoordinate adjacentCoord3 = new MyCoordinate(adjacentCoord2.getRow() + directionX, 
+								adjacentCoord2.getColumn() + directionY);
+						if (pieceAt(adjacentCoord3).equals(currentStoneColor)) {
+							//capture confirmed! change enemyAdjacent and enemyAdjacent2 to EMPTY
+							board[enemyAdjacent.getRow()][enemyAdjacent.getColumn()] = Stone.EMPTY;
+							board[enemyAdjacent2.getRow()][enemyAdjacent2.getColumn()] = Stone.EMPTY;
+							//and increase capture counter by 1 for the current color
+							if (currentStoneColor.equals(Stone.RED)) {
+								redCaptures++;
+							} else {
+								yellowCaptures++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
