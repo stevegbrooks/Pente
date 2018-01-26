@@ -8,8 +8,11 @@ public class MyBoard implements Board {
 	private final int centerCol = 9;
 
 	private int moveNumber;
-	private int redCaptures;
-	private int yellowCaptures;
+	private int redCaptures = 0;
+	private int yellowCaptures = 0;
+	
+	private boolean redFiver = false;
+	private boolean yellowFiver = false;
 
 	/**
 	 * Constructor creates a new Pente board.
@@ -61,7 +64,7 @@ public class MyBoard implements Board {
 			//if its the first move of the game, then center is only legal move
 			if (moveNumber == 0) {
 				//if move isn't center, then throw exception
-				if (moveRow != centerRow && moveCol != centerCol) {
+				if (moveRow != centerRow || moveCol != centerCol) {
 					throw new IllegalArgumentException("Illegal Move "
 							+ "- first move must be center (9,9)");
 				} else {
@@ -96,6 +99,8 @@ public class MyBoard implements Board {
 		moveNumber++;
 		//check for captures
 		checkCapture(s, c);
+		//check for five-in-a-row
+		checkFiveRow(s, c);
 	}
 
 	@Override
@@ -113,10 +118,10 @@ public class MyBoard implements Board {
 		int moveRow = c.getRow();
 		int moveCol = c.getColumn();
 
-		if (moveRow > numOfRows || moveRow < 0) {
+		if (moveRow >= numOfRows || moveRow < 0) {
 			return true;
 		}
-		if (moveCol > numOfColumns || moveCol < 0) {
+		if (moveCol >= numOfColumns || moveCol < 0) {
 			return true;
 		}
 
@@ -158,16 +163,20 @@ public class MyBoard implements Board {
 	 */
 	@Override
 	public boolean gameOver() {
-		//check if 5 in a row
-		//then check if either redCaptures == 5 or yellowCaptures == 5
-		//if any of those are true, then return true
+		if (redFiver || redCaptures >= 5 || yellowFiver || yellowCaptures >= 5) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public Stone getWinner() {
-		// TODO Auto-generated method stub
-		return null;
+		if (redFiver || redCaptures >= 5) {
+			return Stone.RED;
+		} else if (yellowFiver || yellowCaptures >= 5) {
+			return Stone.YELLOW;
+		}
+		return Stone.EMPTY;
 	}
 
 	@Override
@@ -175,7 +184,9 @@ public class MyBoard implements Board {
 		String row = new String();
 		//print column headers
 		for (int i = 0; i < numOfColumns; i++) {
-			if (i < 10) {
+			if (i == 0) {
+				row += "    " + i;
+			} else if (i > 0 & i < 10) {
 				row += "   " + i;
 			} else {
 				row += "  " + i;
@@ -187,25 +198,88 @@ public class MyBoard implements Board {
 		for (int i = 0; i < numOfRows; i++) {
 			//print row #s
 			if (i < 10) {
-				row += " " + i;
+				row += " " + i + "|";
 			} else {
-				row += i;
+				row += i + "|";
 			}
 			for (int j = 0; j < numOfColumns; j++) {
 				//for each coordinate in each row
 				//check the stone color and add to the string
 				if (board[i][j].equals(Stone.EMPTY)) {
-					row = row + "   |";
+					row = row + "___|";
 				} else if (board[i][j].equals(Stone.RED)) {
-					row = row + " O |";
+					row = row + "_O_|";
 				} else {
-					row = row + " X |";
+					row = row + "_X_|";
 				}
 			}
 			row = row + '\n';
 		}
 		return row;
 	}
+	
+	private void checkFiveRow(Stone currentStoneColor, Coordinate c) {
+		//check for 5-in-a-row.
+		//can happen horizontally, vertically, or diagonally
+		//should ideally be checked after a stone is placed
+
+		int moveRow = c.getRow();
+		int moveCol = c.getColumn();
+
+		int directionX = 0;
+		int directionY = 0;
+
+		//iterate through all the intersections
+		for (int i = 0; i < numOfRows; i++) {
+			for (int j = 0; j < numOfColumns; j++) {
+				//if the index is an intersection that is touching the 
+				//current coordinate, and is not the current coordinate
+				int distanceX = Math.abs(i - moveRow);
+				int distanceY = Math.abs(j - moveCol);
+				if (distanceX <= 1 && distanceY <= 1) {
+					if ((distanceX + distanceY) != 0) {
+						MyCoordinate adjacentCoord1 = new MyCoordinate(i, j);
+						//then check if that index has a friendly stone in it
+						if (pieceAt(adjacentCoord1).equals(currentStoneColor)) {
+							//if it does, then record the direction, 
+							//and follow it for 3 more intersections in that direction
+							//each time checking that there is a friendly stone
+							directionX = i - moveRow;
+							directionY = j - moveCol;
+							MyCoordinate adjacentCoord2 = new MyCoordinate(adjacentCoord1.getRow() + directionX, 
+									adjacentCoord1.getColumn() + directionY);
+							//then check if the new index has a friendly stone in it, but 
+							//first make sure its not out of bounds.
+							if (!isOutOfBounds(adjacentCoord2)) {
+								if (pieceAt(adjacentCoord2).equals(currentStoneColor)) {
+									MyCoordinate adjacentCoord3 = new MyCoordinate(adjacentCoord2.getRow() + directionX, 
+											adjacentCoord2.getColumn() + directionY);
+									//then check if the new index has a friendly stone in it.
+									if (!isOutOfBounds(adjacentCoord3)) {
+										if (pieceAt(adjacentCoord3).equals(currentStoneColor)) {
+											MyCoordinate adjacentCoord4 = new MyCoordinate(adjacentCoord3.getRow() + directionX, 
+													adjacentCoord3.getColumn() + directionY);
+											//then check if the new index has a friendly stone in it.
+											if(!isOutOfBounds(adjacentCoord4)) {
+												if (pieceAt(adjacentCoord4).equals(currentStoneColor)) {
+													if (currentStoneColor.equals(Stone.RED)) {
+														redFiver = true;
+													} else {
+														yellowFiver = true;
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 	private void checkCapture(Stone currentStoneColor, Coordinate c) {
 		//check for captures - a capture can occur if a group of two
@@ -230,7 +304,6 @@ public class MyBoard implements Board {
 		int directionY = 0;
 
 		//iterate through all the intersections touching the current one
-		//TODO make sure it doesn't go out of bounds
 		for (int i = 0; i < numOfRows; i++) {
 			for (int j = 0; j < numOfColumns; j++) {
 				//if the index is an intersection that is touching the 
@@ -238,27 +311,33 @@ public class MyBoard implements Board {
 				if (Math.abs(i - moveRow) <= 1 && Math.abs(j - moveCol) <= 1) {
 					MyCoordinate adjacentCoord = new MyCoordinate(i, j);
 					//then check if that index has an enemy stone
-					if (pieceAt(adjacentCoord).equals(enemyColor)) {
-						enemyAdjacent = adjacentCoord;
-						//check direction that enemy is in
-						directionX = i - moveRow;
-						directionY = j - moveCol;
-						//check next one over
-						MyCoordinate adjacentCoord2 = new MyCoordinate(i + directionX, j + directionY);
-						if (pieceAt(adjacentCoord2).equals(enemyColor)) {
-							enemyAdjacent2 = adjacentCoord2;
-							//check that there's a friendly piece next one over
-							MyCoordinate adjacentCoord3 = new MyCoordinate(adjacentCoord2.getRow() + directionX, 
+					if (!isOutOfBounds(adjacentCoord)) {
+						if (pieceAt(adjacentCoord).equals(enemyColor)) {
+							enemyAdjacent = adjacentCoord;
+							//check direction that enemy is in
+							directionX = i - moveRow;
+							directionY = j - moveCol;
+							//check next one over
+							MyCoordinate adjacentCoord2 = new MyCoordinate(i + directionX, j + directionY);
+							if (!isOutOfBounds(adjacentCoord2)) {
+								if (pieceAt(adjacentCoord2).equals(enemyColor)) {
+									enemyAdjacent2 = adjacentCoord2;
+									//check that there's a friendly piece next one over
+									MyCoordinate adjacentCoord3 = new MyCoordinate(adjacentCoord2.getRow() + directionX, 
 									adjacentCoord2.getColumn() + directionY);
-							if (pieceAt(adjacentCoord3).equals(currentStoneColor)) {
-								//capture confirmed! change enemyAdjacent and enemyAdjacent2 to EMPTY
-								board[enemyAdjacent.getRow()][enemyAdjacent.getColumn()] = Stone.EMPTY;
-								board[enemyAdjacent2.getRow()][enemyAdjacent2.getColumn()] = Stone.EMPTY;
-								//and increase capture counter by 1 for the current color
-								if (currentStoneColor.equals(Stone.RED)) {
-									redCaptures++;
-								} else {
-									yellowCaptures++;
+									if (!isOutOfBounds(adjacentCoord3)) {
+										if (pieceAt(adjacentCoord3).equals(currentStoneColor)) {
+											//capture confirmed! change enemyAdjacent and enemyAdjacent2 to EMPTY
+											board[enemyAdjacent.getRow()][enemyAdjacent.getColumn()] = Stone.EMPTY;
+											board[enemyAdjacent2.getRow()][enemyAdjacent2.getColumn()] = Stone.EMPTY;
+											//and increase capture counter by 1 for the current color
+											if (currentStoneColor.equals(Stone.RED)) {
+												redCaptures++;
+											} else {
+												yellowCaptures++;
+											}
+										}
+									}
 								}
 							}
 						}

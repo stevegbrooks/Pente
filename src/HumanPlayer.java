@@ -11,7 +11,7 @@ public class HumanPlayer implements Player {
 	public Coordinate getMove(Board b) {
 		Scanner in = new Scanner(System.in);
 		
-		System.out.print("Please enter a coordinate using the following"
+		System.out.print(getStone() + " - Please enter a coordinate using the following"
 				+ " format (comma separated): row#, col# ");
 		
 		String line = in.nextLine();

@@ -6,7 +6,7 @@ public class Game {
 		HumanPlayer human = new HumanPlayer(Stone.YELLOW);
 		MyBoard b = new MyBoard();
 		
-		while(!b.gameOver()) {
+		while(true) {
 			if (sbr.getStone().equals(Stone.RED)) {
 				while(true) {
 					try {
@@ -17,6 +17,9 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				if (b.gameOver()) {
+					break;
+				}
 				while(true) {
 					try {
 						b.placeStone(Stone.YELLOW, human.getMove(b));
@@ -26,6 +29,9 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				if (b.gameOver()) {
+					break;
+				}
 			} else {
 				while(true) {
 					try {
@@ -36,6 +42,9 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				if (b.gameOver()) {
+					break;
+				}
 				while(true) {
 					try {
 						b.placeStone(Stone.RED, human.getMove(b));
@@ -45,9 +54,13 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				if (b.gameOver()) {
+					break;
+				}
 			}
 		}
-		
+		Stone winningColor = b.getWinner();
+		System.out.println("The winner is: " + winningColor);
 	}
 	
 }
