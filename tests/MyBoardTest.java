@@ -60,7 +60,7 @@ public class MyBoardTest {
 	}
 	
 	@Test
-	public void testCheckFiveRow() {
+	public void testCheckFiveRow2() {
 		b.placeStone(sY, c); //9,9 YELLOW
 		b.placeStone(sY, c2); //9,8 YELLOW
 		MyCoordinate c3 = new MyCoordinate(9,7);

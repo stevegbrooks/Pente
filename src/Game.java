@@ -29,6 +29,8 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				System.out.println("Red Captures: " + b.getRedCaptures());
+				System.out.println("Yellow Captures: " + b.getYellowCaptures());
 				if (b.gameOver()) {
 					break;
 				}
@@ -54,6 +56,8 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				System.out.println("Red Captures: " + b.getRedCaptures());
+				System.out.println("Yellow Captures: " + b.getYellowCaptures());
 				if (b.gameOver()) {
 					break;
 				}

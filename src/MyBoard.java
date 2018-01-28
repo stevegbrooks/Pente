@@ -11,8 +11,8 @@ public class MyBoard implements Board {
 	private int redCaptures = 0;
 	private int yellowCaptures = 0;
 	
-	private boolean redFiver = false;
-	private boolean yellowFiver = false;
+	private boolean redPente = false;
+	private boolean yellowPente = false;
 
 	/**
 	 * Constructor creates a new Pente board.
@@ -163,7 +163,7 @@ public class MyBoard implements Board {
 	 */
 	@Override
 	public boolean gameOver() {
-		if (redFiver || redCaptures >= 5 || yellowFiver || yellowCaptures >= 5) {
+		if (redPente || redCaptures >= 5 || yellowPente || yellowCaptures >= 5) {
 			return true;
 		}
 		return false;
@@ -171,9 +171,9 @@ public class MyBoard implements Board {
 
 	@Override
 	public Stone getWinner() {
-		if (redFiver || redCaptures >= 5) {
+		if (redPente || redCaptures >= 5) {
 			return Stone.RED;
-		} else if (yellowFiver || yellowCaptures >= 5) {
+		} else if (yellowPente || yellowCaptures >= 5) {
 			return Stone.YELLOW;
 		}
 		return Stone.EMPTY;
@@ -221,7 +221,6 @@ public class MyBoard implements Board {
 	private void checkFiveRow(Stone currentStoneColor, Coordinate c) {
 		//check for 5-in-a-row.
 		//can happen horizontally, vertically, or diagonally
-		//should ideally be checked after a stone is placed
 
 		int moveRow = c.getRow();
 		int moveCol = c.getColumn();
@@ -238,39 +237,41 @@ public class MyBoard implements Board {
 				int distanceY = Math.abs(j - moveCol);
 				if (distanceX <= 1 && distanceY <= 1) {
 					if ((distanceX + distanceY) != 0) {
-						MyCoordinate adjacentCoord1 = new MyCoordinate(i, j);
+						MyCoordinate adjacentCoord = new MyCoordinate(i, j);
 						//then check if that index has a friendly stone in it
-						if (pieceAt(adjacentCoord1).equals(currentStoneColor)) {
+						if (pieceAt(adjacentCoord).equals(currentStoneColor)) {
 							//if it does, then record the direction, 
-							//and follow it for 3 more intersections in that direction
-							//each time checking that there is a friendly stone
 							directionX = i - moveRow;
 							directionY = j - moveCol;
-							MyCoordinate adjacentCoord2 = new MyCoordinate(adjacentCoord1.getRow() + directionX, 
-									adjacentCoord1.getColumn() + directionY);
-							//then check if the new index has a friendly stone in it, but 
-							//first make sure its not out of bounds.
-							if (!isOutOfBounds(adjacentCoord2)) {
-								if (pieceAt(adjacentCoord2).equals(currentStoneColor)) {
-									MyCoordinate adjacentCoord3 = new MyCoordinate(adjacentCoord2.getRow() + directionX, 
-											adjacentCoord2.getColumn() + directionY);
-									//then check if the new index has a friendly stone in it.
-									if (!isOutOfBounds(adjacentCoord3)) {
-										if (pieceAt(adjacentCoord3).equals(currentStoneColor)) {
-											MyCoordinate adjacentCoord4 = new MyCoordinate(adjacentCoord3.getRow() + directionX, 
-													adjacentCoord3.getColumn() + directionY);
-											//then check if the new index has a friendly stone in it.
-											if(!isOutOfBounds(adjacentCoord4)) {
-												if (pieceAt(adjacentCoord4).equals(currentStoneColor)) {
-													if (currentStoneColor.equals(Stone.RED)) {
-														redFiver = true;
-													} else {
-														yellowFiver = true;
-													}
-												}
-											}
-										}
+							//now start the search
+							final int SEARCH_AREA = 8;
+							MyCoordinate[] coordArray = new MyCoordinate[SEARCH_AREA];
+							//fill the search array with eligible coordinates
+							for (int s = -3; s <= SEARCH_AREA/2; s++) {
+								MyCoordinate coord = new MyCoordinate(s*directionX + moveRow, 
+										s*directionY + moveCol);
+								int index = s + 3;
+								coordArray[index] = coord;
+							}
+							//now search the array for 5-in-a-row
+							int counter = 0;
+							for (int s = 0; s < coordArray.length; s++) {
+								//make sure its in-bounds
+								if (!isOutOfBounds(coordArray[s])) {
+									if (pieceAt(coordArray[s]).equals(currentStoneColor)) {
+										counter++;
+									} else {
+										counter = 0;
 									}
+								}
+								if (counter >= 5 & currentStoneColor.equals(Stone.YELLOW)) {
+									yellowPente = true;
+									System.out.println("Yellow Pente!");
+									break;
+								} else if (counter >= 5 & currentStoneColor.equals(Stone.RED)) {
+									redPente = true;
+									System.out.println("Red Pente!");
+									break;
 								}
 							}
 						}
@@ -279,7 +280,6 @@ public class MyBoard implements Board {
 			}
 		}
 	}
-
 
 	private void checkCapture(Stone currentStoneColor, Coordinate c) {
 		//check for captures - a capture can occur if a group of two
@@ -333,8 +333,10 @@ public class MyBoard implements Board {
 											//and increase capture counter by 1 for the current color
 											if (currentStoneColor.equals(Stone.RED)) {
 												redCaptures++;
+												System.out.println("Red Capture!");
 											} else {
 												yellowCaptures++;
+												System.out.println("Yellow Pente!");
 											}
 										}
 									}
