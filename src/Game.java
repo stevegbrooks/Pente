@@ -2,8 +2,8 @@
 public class Game {
 
 	public static void main(String[] args) {
-		HumanPlayer sbr = new HumanPlayer(Stone.RED);
-		HumanPlayer human = new HumanPlayer(Stone.YELLOW);
+		SbrPlayer sbr = new SbrPlayer(Stone.YELLOW);
+		HumanPlayer human = new HumanPlayer(Stone.RED);
 		MyBoard b = new MyBoard();
 		
 		while(true) {
@@ -37,7 +37,7 @@ public class Game {
 			} else {
 				while(true) {
 					try {
-						b.placeStone(Stone.YELLOW, sbr.getMove(b));
+						b.placeStone(Stone.RED, human.getMove(b));
 						break;
 					} catch (IllegalArgumentException iae) {
 						System.out.println(iae.getMessage());
@@ -49,7 +49,7 @@ public class Game {
 				}
 				while(true) {
 					try {
-						b.placeStone(Stone.RED, human.getMove(b));
+						b.placeStone(Stone.YELLOW, sbr.getMove(b));
 						break;
 					} catch (IllegalArgumentException iae) {
 						System.out.println(iae.getMessage());
