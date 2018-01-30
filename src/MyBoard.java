@@ -264,11 +264,11 @@ public class MyBoard implements Board {
 										counter = 0;
 									}
 								}
-								if (counter >= 5 & currentStoneColor.equals(Stone.YELLOW)) {
+								if (counter == 5 & currentStoneColor.equals(Stone.YELLOW)) {
 									yellowPente = true;
 									System.out.println("Yellow Pente!");
 									break;
-								} else if (counter >= 5 & currentStoneColor.equals(Stone.RED)) {
+								} else if (counter == 5 & currentStoneColor.equals(Stone.RED)) {
 									redPente = true;
 									System.out.println("Red Pente!");
 									break;
@@ -336,7 +336,7 @@ public class MyBoard implements Board {
 												System.out.println("Red Capture!");
 											} else {
 												yellowCaptures++;
-												System.out.println("Yellow Pente!");
+												System.out.println("Yellow Capture!");
 											}
 										}
 									}

@@ -2,9 +2,9 @@
 public class Game {
 
 	public static void main(String[] args) {
-		SbrPlayer sbr = new SbrPlayer(Stone.YELLOW);
-		HumanPlayer human = new HumanPlayer(Stone.RED);
-		MyBoard b = new MyBoard();
+		Player sbr = new SbrPlayer(Stone.RED);
+		Player human = new HumanPlayer(Stone.YELLOW);
+		Board b = new MyBoard();
 		
 		while(true) {
 			if (sbr.getStone().equals(Stone.RED)) {
@@ -17,6 +17,7 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				System.out.println(b.getMoveNumber());
 				if (b.gameOver()) {
 					break;
 				}
@@ -31,6 +32,7 @@ public class Game {
 				System.out.println(b);
 				System.out.println("Red Captures: " + b.getRedCaptures());
 				System.out.println("Yellow Captures: " + b.getYellowCaptures());
+				System.out.println(b.getMoveNumber());
 				if (b.gameOver()) {
 					break;
 				}
@@ -44,6 +46,7 @@ public class Game {
 					}
 				}
 				System.out.println(b);
+				System.out.println(b.getMoveNumber());
 				if (b.gameOver()) {
 					break;
 				}
@@ -58,6 +61,7 @@ public class Game {
 				System.out.println(b);
 				System.out.println("Red Captures: " + b.getRedCaptures());
 				System.out.println("Yellow Captures: " + b.getYellowCaptures());
+				System.out.println(b.getMoveNumber());
 				if (b.gameOver()) {
 					break;
 				}
