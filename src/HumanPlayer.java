@@ -1,5 +1,15 @@
 import java.util.Scanner;
-
+/**
+ * This class implements player,
+ * and simply asks the human to input coordinates.
+ * 
+ * If the move is illegal, then MyBoard will throw an 
+ * exception, and Game will handle it and ask the human
+ * to provide another coordinate.
+ * 
+ * @author sgb
+ *
+ */
 public class HumanPlayer implements Player {
 	private Stone stone;
 	

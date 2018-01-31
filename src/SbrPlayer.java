@@ -2,7 +2,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
-
+/**
+ * This class implements Player.
+ * It is a fairly dumb "AI" pente player, but it is rather
+ * good at picking up captures.
+ * 
+ * It keeps track of its past moves and tries
+ * to keep track of pente opportunities.
+ * 
+ * Its only method after move #4 in the game is 
+ * to either flank or extend a run.
+ * 
+ * @author sgb
+ *
+ */
 public class SbrPlayer implements Player {
 	private Stone friendlyStone;
 	private HashMap<Integer, Coordinate> sbrBoard;
@@ -11,7 +24,10 @@ public class SbrPlayer implements Player {
 	private Stone enemyStone;
 	private boolean penteOpportunity;
 	private boolean blockPenteOpportunity;
-	
+	/**
+	 * Constructor method
+	 * @param stone the color that this player will use
+	 */
 	public SbrPlayer(Stone stone) {
 		friendlyStone = stone;
 		sbrBoard = new HashMap<>();
@@ -24,7 +40,12 @@ public class SbrPlayer implements Player {
 			enemyStone = Stone.RED;
 		}
 	}
-
+	/**
+	 * The getMove() method takes in an object of type Board, and then
+	 * determines the best move for the player. It tries to balance the needs
+	 * of offense and defense after move #4. For moves after move #0 -> move #3,
+	 * it just tries to make a legal/good move, but its not an intelligent move.
+	 */
 	@Override
 	public Coordinate getMove(Board b) {
 		Coordinate center = new MyCoordinate(9, 9);
@@ -36,7 +57,7 @@ public class SbrPlayer implements Player {
 		if (lastMoveNum == 0) {
 			move = center;
 		} else if (lastMoveNum == 1) {
-			//the best move here is within one intersection of center
+			//the best move here is usually within one intersection of center
 			move = pickRandCoordWithBounds(b, center, 1, 2);
 		} else if (lastMoveNum == 2) {
 			//last move will necessarily be 9,9

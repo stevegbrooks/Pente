@@ -1,4 +1,10 @@
-
+/**
+ * This class has the main method, and makes sure 
+ * that RED goes first, and YELLOW goes second.
+ * 
+ * @author sgb
+ *
+ */
 public class Game {
 
 	public static void main(String[] args) {

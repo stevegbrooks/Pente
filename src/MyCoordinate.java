@@ -1,4 +1,10 @@
-
+/**
+ * This class implement Coordinate, and allows for 
+ * communication of board intersections across objects.
+ * 
+ * @author sgb
+ *
+ */
 public class MyCoordinate implements Coordinate {
 	
 	private int row;

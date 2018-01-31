@@ -1,4 +1,14 @@
-
+/**
+ * This class implements board, and handles
+ * whether or not a move is legal (throws exceptions if they are not),
+ * and also determines if captures are made (and removes pieces if they are)
+ * and determines if there is a pente.  
+ * 
+ * It ends the game if captures reaches 5 or a pente occurs.
+ * 
+ * @author sgb
+ *
+ */
 public class MyBoard implements Board {
 
 	private Stone[][] board;
@@ -217,7 +227,12 @@ public class MyBoard implements Board {
 		}
 		return row;
 	}
-	
+	/**
+	 * This method will check for a pente on the board.
+	 * 
+	 * @param currentStoneColor the color of the last piece played
+	 * @param c the location of the last piece played
+	 */
 	private void checkFiveRow(Stone currentStoneColor, Coordinate c) {
 		//check for 5-in-a-row.
 		//can happen horizontally, vertically, or diagonally
@@ -280,7 +295,13 @@ public class MyBoard implements Board {
 			}
 		}
 	}
-
+	/**
+	 * This method will check for captures, and increment
+	 * the capture counter if one is detected.
+	 * 
+	 * @param currentStoneColor the color of the last piece played
+	 * @param c the location of the last piece played
+	 */
 	private void checkCapture(Stone currentStoneColor, Coordinate c) {
 		//check for captures - a capture can occur if a group of two
 		//stones of the enemy color is flanked on both sides. This can
