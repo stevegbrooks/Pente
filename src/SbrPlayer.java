@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -8,10 +9,14 @@ public class SbrPlayer implements Player {
 	private final int numOfRows = 19;
 	private final int numOfCols = 19;
 	private Stone enemyStone;
+	private boolean penteOpportunity;
+	private boolean blockPenteOpportunity;
 	
 	public SbrPlayer(Stone stone) {
 		friendlyStone = stone;
 		sbrBoard = new HashMap<>();
+		penteOpportunity = false;
+		blockPenteOpportunity = false;
 		
 		if (stone.equals(Stone.RED)) {
 			enemyStone = Stone.YELLOW;
@@ -66,23 +71,45 @@ public class SbrPlayer implements Player {
 			//best move here is place a stone immediately next to the center
 			move = pickRandCoordWithBounds(b, center, 1, 2);
 		} else {
-			//try an extending move
-			Coordinate extendingMove = flankOrExtend(b, friendlyStone);
-			//try a flanking move
-			Coordinate flankingMove = flankOrExtend(b, enemyStone);
-			//if none of those turn up a move then just pick a random empty intersection
-			if (flankingMove == null && extendingMove == null) {
-				Coordinate lastMove = sbrBoard.get(lastMoveNum - 1);
-				move = pickRandCoordWithBounds(b, lastMove, 1, 2);
-			} else if (flankingMove == null) {
-				move = extendingMove;
-			} else {
-				move = flankingMove;
+			while (penteOpportunity == false) {
+				//try an extending move
+				Coordinate extendingMove = flankOrExtend(b, friendlyStone);
+				//try a flanking move
+				Coordinate flankingMove = flankOrExtend(b, enemyStone);
+				//if none of those turn up a move then just pick a random empty intersection
+				if (flankingMove == null && extendingMove == null) {
+					Coordinate lastMove = sbrBoard.get(lastMoveNum - 1);
+					move = pickRandCoordWithBounds(b, lastMove, 1, 2);
+					break;
+				} else if (flankingMove == null) {
+					move = extendingMove;
+					break;
+				} else {
+					move = flankingMove;
+					break;
+				}
+			}
+			if (penteOpportunity == true) {
+				Coordinate penteMove = flankOrExtend(b, friendlyStone);
+				if (penteMove != null) {
+					if (!b.isOutOfBounds(penteMove)) {
+						move = penteMove;
+					}
+				}
+			} else if (blockPenteOpportunity == true) {
+				Coordinate penteMove = flankOrExtend(b, enemyStone);
+				if (penteMove != null) {
+					if (!b.isOutOfBounds(penteMove)) {
+						move = penteMove;
+					}
+				}
 			}
 		}
-		
+		if (move == null) {
+			Coordinate lastMove = sbrBoard.get(lastMoveNum - 1);
+			move = pickRandCoordWithBounds(b, lastMove, 1, 2);
+		}
 		sbrBoard.put(lastMoveNum + 1, move);
-		
 		return move;
 	}
 	/**
@@ -144,10 +171,8 @@ public class SbrPlayer implements Player {
 	private Coordinate flankOrExtend(Board b, Stone stone) {
 		int lastMoveNum = b.getMoveNumber();
 		Coordinate move = null;
-		int counter = 0;
-
 		ArrayList<Coordinate> primaryArray = new ArrayList<>();
-		//find an stone based on parameter stone
+		//find all stones matching parameter stone
 		for (int i = 0; i < numOfRows; i++) {
 			for (int j = 0; j < numOfCols; j++) {
 				Coordinate coord = new MyCoordinate(i, j);
@@ -171,6 +196,9 @@ public class SbrPlayer implements Player {
 				flankOrExtend(b, enemyStone);
 			}
 		} else {
+			//shuffle the arraylist
+			Collections.shuffle(primaryArray);
+			//search through 
 			for (int t = 0; t < primaryArray.size(); t++) {
 				Coordinate primaryCoord = primaryArray.get(t);
 				//once an enemy stone is found, search around it for adjacent stones and
@@ -208,16 +236,35 @@ public class SbrPlayer implements Player {
 													s*directionY + primaryCol);
 											coordArray.add(coord);
 										}
-										//TODO: this part!
 										//now search the array for an opportunity to flank/extend
+										//but also check for a pente opportunity
 										Coordinate emptyCoord = null;
+										int blockPenteCounter = 0;
+										int penteCounter = 0;
+										int emptyCounter = 0;
 										for (int s = 0; s < coordArray.size(); s++) {
 											Coordinate candidate = coordArray.get(s);
 
 											if (!b.isOutOfBounds(candidate)) {
 												if (b.isEmpty(candidate)) {
 													emptyCoord = candidate;
+													emptyCounter++;
+													penteCounter--;
+													blockPenteCounter--;
+												} else if (b.pieceAt(candidate) == stone) {
+													penteCounter++;
+												} else if (b.pieceAt(candidate) == enemyStone) {
+													blockPenteCounter++;
 												}
+											}
+											if ((penteCounter >= 3 || blockPenteCounter >= 3) 
+													&& emptyCounter != 0) {
+												if (penteCounter == 4) {
+													penteOpportunity = true;
+												} else if (blockPenteCounter == 4) {
+													blockPenteOpportunity = true;
+												}
+												break;
 											}
 										}
 										//make sure the EMPTY intersection is touching an intersection
